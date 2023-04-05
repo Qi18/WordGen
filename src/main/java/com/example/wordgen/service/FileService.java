@@ -14,7 +14,6 @@ import com.example.wordgen.repository.FileRawFileRepository;
 import com.example.wordgen.repository.FileRepository;
 import com.example.wordgen.repository.HistoryInfoRepository;
 import com.example.wordgen.repository.RawFileRepository;
-import com.example.wordgen.util.OpenAIChat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
