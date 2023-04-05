@@ -1,16 +1,8 @@
-package com.example.demo.util;
+package com.example.wordgen.util;
 
-import cn.hutool.http.HttpRequest;
-import cn.hutool.json.JSONArray;
-import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
-import com.example.demo.model.entity.HistoryInfo;
-import com.example.demo.repository.HistoryInfoRepository;
 import lombok.experimental.UtilityClass;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Resource;
-import java.util.*;
 
 /**
  * @author: rich
@@ -24,8 +16,6 @@ public class OpenAIChat {
 
     public String apiKey = "Bearer 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";
 
-    @Resource
-    HistoryInfoRepository historyInfoRepository;
 
 //    public String chat(String question, Integer RawTextId) {
 //        Optional<HistoryInfo> historyInfoOptional = historyInfoRepository.findByRawFileId(RawTextId);
