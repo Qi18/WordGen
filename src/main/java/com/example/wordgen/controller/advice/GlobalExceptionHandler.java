@@ -4,6 +4,7 @@ import cn.hutool.core.convert.ConvertException;
 import cn.hutool.http.HttpException;
 import com.example.wordgen.exception.ServiceException;
 import com.example.wordgen.model.response.ApiResponse;
+import freemarker.template.TemplateNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -56,6 +57,21 @@ public class GlobalExceptionHandler {
         return ApiResponse.error(e.getMessage());
     }
 
+    @ExceptionHandler(TemplateNotFoundException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiResponse defaultHandler(TemplateNotFoundException ex) {
+        logger.error("Exception!:{}", ex.getMessage());
+        return ApiResponse.error(ex.getMessage());
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiResponse defaultHandler(Exception ex) {
+        logger.error("Exception!:{}", ex.getMessage());
+        return ApiResponse.error(ex.getMessage());
+    }
 //    @ExceptionHandler(Exception.class)
 //    @ResponseBody
 //    @ResponseStatus(HttpStatus.BAD_REQUEST)

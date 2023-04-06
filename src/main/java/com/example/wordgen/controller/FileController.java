@@ -1,12 +1,26 @@
 package com.example.wordgen.controller;
 
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.poi.word.WordUtil;
 import com.example.wordgen.model.entity.File;
 import com.example.wordgen.model.request.ReGenParam;
 import com.example.wordgen.model.response.ApiResponse;
 import com.example.wordgen.service.FileService;
+import com.example.wordgen.util.DocUtils;
+import freemarker.template.Template;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+import java.net.URLEncoder;
+import java.util.Date;
+import java.util.Map;
 
 /**
  * @author: rich
@@ -55,10 +69,18 @@ public class FileController {
     }
 
     @GetMapping("storeWordFile")
-    public ApiResponse storeWordFile(@RequestParam("fileId") Integer fileId) {
+    public ApiResponse storeWordFile(HttpServletResponse response, @RequestParam("fileId") Integer fileId) throws IOException {
         if (log.isInfoEnabled()) {
             log.info("/proc/storeWordFile");
         }
-        return ApiResponse.success(fileService.genWordFile(fileId));
+        //生成word文件设置
+        String fileName = URLEncoder.encode("生成文档" + DateUtil.format(new Date(), "yyyyMMddHHmmss"), "UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        response.addHeader("Content-Disposition", "attachment; filename=" + fileName + ".docx");
+        Writer writer = response.getWriter();
+        Map<String, Object> dataMap = fileService.genWordFile(fileId);
+        String templateName = "template.ftl";
+        DocUtils.generateWord(dataMap, templateName, writer);
+        return ApiResponse.success(null);
     }
 }

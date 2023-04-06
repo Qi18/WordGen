@@ -14,6 +14,8 @@ import com.example.wordgen.repository.FileRawFileRepository;
 import com.example.wordgen.repository.FileRepository;
 import com.example.wordgen.repository.HistoryInfoRepository;
 import com.example.wordgen.repository.RawFileRepository;
+import com.example.wordgen.util.DocUtils;
+import com.example.wordgen.util.OpenAIChat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -83,7 +85,6 @@ public class FileService {
         Optional<HistoryInfo> historyInfoOptional = historyInfoRepository.findByRawFileId(RawTextId);
         String historyInfo = "";
         if (historyInfoOptional.isPresent()) historyInfo = historyInfoOptional.get().getHistory();
-        JSONObject param = null;
         if (historyInfo == null || historyInfo.equals("")) {
             //初始化请求参数体
             Map<String, Object> paramMap = new HashMap<>();
@@ -98,7 +99,7 @@ public class FileService {
         }});
         String newRecord = JSONUtil.toJsonStr(paramMap);
         historyInfo = addRecord(newRecord, historyInfo);
-        param = JSONUtil.parseObj(historyInfo);
+        JSONObject param = JSONUtil.parseObj(historyInfo);
         String body = HttpRequest.post(OpenAIChat.chatEndpoint)
                 .header("Authorization", OpenAIChat.apiKey)
                 .header("Content-Type", "application/json")
@@ -183,7 +184,19 @@ public class FileService {
         return fileOptional.get();
     }
 
-    public Object genWordFile(Integer fileId) {
-
+    public Map<String, Object> genWordFile(Integer fileId) {
+        Optional<File> fileOptional = fileRepository.findById(fileId);
+        if (!fileOptional.isPresent()) throw new ServiceException("生成文件不存在，请重新操作");
+        File file = fileOptional.get();
+        Map<String, Object> dataMap = new HashMap<String, Object>(){{
+            put("understanding", file.getUnderstanding());
+            put("schedule", file.getSchedule());
+            put("commitment", file.getCommitment());
+            put("quality", file.getQuality());
+            put("back", file.getBack());
+        }};
+//        String templateName = "template.ftl";
+//        DocUtils.generateWord(dataMap, templateName, "C:\\Users\\rich\\Desktop\\demo.docx");
+        return dataMap;
     }
 }
